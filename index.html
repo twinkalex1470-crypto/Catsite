@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catler VPN</title>
+    <style>
+        /* Основные стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            line-height: 1.6;
+            padding: 15px;
+        }
+        
+        /* Шапка */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4361ee;
+        }
+        
+        .logo {
+            font-size: 36px;
+            font-weight: bold;
+            color: #4cc9f0;
+            margin-bottom: 10px;
+        }
+        
+        /* Меню */
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .menu-btn {
+            background: #4361ee;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .menu-btn:hover {
+            background: #3a0ca3;
+        }
+        
+        /* Секции */
+        .section {
+            display: none;
+            background: rgba(40, 40, 60, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        /* Кнопка назад */
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+        }
+        
+        /* Карточки */
+        .card {
+            background: rgba(67, 97, 238, 0.1);
+            border: 1px solid #4361ee;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        /* Кнопки действий */
+        .action-btn {
+            background: #06d6a0;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            width: 100%;
+            font-size: 16px;
+        }
+        
+        /* Ссылки */
+        .link-box {
+            background: black;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            word-break: break-all;
+        }
+        
+        /* Мобильная адаптация */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .menu-btn {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <div class="header">
+        <div class="logo">CATLER</div>
+        <h1>Добро пожаловать!</h1>
+        <p>Бесплатный VPN и проекты</p>
+    </div>
+    
+    <!-- Главное меню -->
+    <div id="mainMenu" class="menu">
+        <button class="menu-btn" onclick="showSection('vpn')">🔐 VPN Подписки</button>
+        <button class="menu-btn" onclick="showSection('projects')">🚀 Наши проекты</button>
+        <button class="menu-btn" onclick="showSection('groups')">💬 Группы</button>
+        <button class="menu-btn" onclick="showSection('help')">❓ Помощь</button>
+    </div>
+    
+    <!-- Секция VPN -->
+    <div id="vpn" class="section">
+        <h2>🔐 Бесплатный VPN</h2>
+        <div class="card">
+            <h3>OBSpiscov VPN</h3>
+            <p>Бесплатно! Работает на Android через HАPP.</p>
+            
+            <div class="link-box">
+                <strong>Ссылка для подключения:</strong><br>
+                https://raw.githubusercontent.com/vsevjik/OBSpiskov/refs/heads/main/wwh#OBSpiskov
+            </div>
+            
+            <button class="action-btn" onclick="copyToClipboard()">📋 Скопировать ссылку</button>
+            
+            <p><strong>Как установить:</strong></p>
+            <ol>
+                <li>Скачайте HАPP из Play Market</li>
+                <li>Откройте HАPP</li>
+                <li>Вставьте ссылку выше</li>
+                <li>Название: OBSpiscov</li>
+                <li>Наслаждайтесь!</li>
+            </ol>
+            
+            <a href="https://play.google.com/store/apps/details?id=com.happ.v2rayng" class="menu-btn" target="_blank">
+                📲 Скачать HАPP
+            </a>
+        </div>
+        <button class="back-btn" onclick="showMainMenu()">⬅ Назад</button>
+    </div>
+    
+    <!-- Секция проектов -->
+    <div id="projects" class="section">
+        <h2>🚀 Наши проекты</h2>
+        
+        <div class="card">
+            <h3>⚙️ catMake</h3>
+            <p>Создатель VPN подписок для Windows</p>
+            <p>Разработчик: @ahsas1022</p>
+        </div>
+        
+        <div class="card">
+            <h3>🌐 UWB</h3>
+            <p>Сайт для поиска V2ray конфигов</p>
+            <p>Сайт: http://ryzgames31.github.io/UWB</p>
+            <p>Разработчик: @VRRYZzz</p>
+        </div>
+        
+        <div class="card">
+            <h3>📡 Дом. NetPазрыв</h3>
+            <p>Решение проблем с интернетом</p>
+            <p>Разработчик: @moscalby</p>
+            <p>Доступен в сообществе Catler</p>
+        </div>
+        
+        <button class="back-btn" onclick="showMainMenu()">⬅ Назад</button>
+    </div>
+    
+    <!-- Секция групп -->
+    <div id="groups" class="section">
+        <h2>💬 Группы Catler</h2>
+        
+        <a href="https://t.me/catlergememe" class="menu-btn" target="_blank">
+            📢 Основной канал
+        </a>
+        
+        <a href="https://t.me/catlerok12" class="menu-btn" target="_blank">
+            💭 Основной чат
+        </a>
+        
+        <a href="https://t.me/+fFFIWlFK3tE2MTMy" class="menu-btn" target="_blank">
+            👥 Комьюнити Catler
+        </a>
+        
+        <a href="https://t.me/+iQ4MwLq90qNjY2Yy" class="menu-btn" target="_blank">
+            👻 Подвал Catler
+        </a>
+        
+        <button class="back-btn" onclick="showMainMenu()">⬅ Назад</button>
+    </div>
+    
+    <!-- Секция помощи -->
+    <div id="help" class="section">
+        <h2>❓ Помощь</h2>
+        
+        <div class="card">
+            <h3>Частые проблемы:</h3>
+            <p><strong>Не скачивается HАPP:</strong><br>Ищите "happ v2rayng" в Play Market</p>
+            <p><strong>Не вставляется ссылка:</strong><br>Скопируйте ссылку выше</p>
+            <p><strong>Не подключается:</strong><br>Напишите @vsevj_134</p>
+        </div>
+        
+        <div class="card">
+            <h3>Контакты разработчиков:</h3>
+            <p>@vsevj_134 - VPN OBSpiscov</p>
+            <p>@ahsas1022 - catMake</p>
+            <p>@VRRYZzz - UWB</p>
+            <p>@moscalby - Дом. NetPазрыв</p>
+        </div>
+        
+        <button class="back-btn" onclick="showMainMenu()">⬅ Назад</button>
+    </div>
+    
+    <!-- Уведомление -->
+    <div id="notification" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #06d6a0; color: white; padding: 15px; border-radius: 10px; z-index: 1000;">
+        ✅ Ссылка скопирована!
+    </div>
+
+    <script>
+        // Функция показа секции
+        function showSection(sectionId) {
+            // Скрыть все секции
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Скрыть главное меню
+            document.getElementById('mainMenu').style.display = 'none';
+            
+            // Показать нужную секцию
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Прокрутить вверх
+            window.scrollTo(0, 0);
+        }
+        
+        // Функция показа главного меню
+        function showMainMenu() {
+            // Скрыть все секции
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Показать главное меню
+            document.getElementById('mainMenu').style.display = 'flex';
+            
+            // Прокрутить вверх
+            window.scrollTo(0, 0);
+        }
+        
+        // Функция копирования ссылки
+        function copyToClipboard() {
+            const link = "https://raw.githubusercontent.com/vsevjik/OBSpiskov/refs/heads/main/wwh#OBSpiskov";
+            
+            // Создаем временный input для копирования
+            const tempInput = document.createElement("input");
+            tempInput.value = link;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            
+            // Показываем уведомление
+            const notification = document.getElementById("notification");
+            notification.style.display = "block";
+            
+            // Скрываем уведомление через 3 секунды
+            setTimeout(() => {
+                notification.style.display = "none";
+            }, 3000);
+        }
+        
+        // Активируем кнопки меню при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Изначально показываем только главное меню
+            showMainMenu();
+        });
+    </script>
+</body>
+</html>
