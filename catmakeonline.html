@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatMakeOnline - VPN Subscription Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #8a2be2;
+            --primary-dark: #6a1cb0;
+            --secondary: #ff6b6b;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+        
+        body {
+            background-color: #0f0f1e;
+            color: #e0e0e0;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 107, 107, 0.1) 0%, transparent 20%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        .logo h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+        
+        .logo span {
+            color: var(--secondary);
+        }
+        
+        .tagline {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background-color: rgba(26, 26, 46, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .card-title i {
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b0b0b0;
+            font-weight: 500;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            background-color: rgba(15, 15, 30, 0.7);
+            color: #e0e0e0;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(138, 43, 226, 0.1);
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .tab:hover:not(.active) {
+            color: #b0b0b0;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .config-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            padding: 10px;
+        }
+        
+        .config-item {
+            padding: 12px;
+            border-radius: 8px;
+            background-color: rgba(15, 15, 30, 0.5);
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .config-item:hover {
+            background-color: rgba(15, 15, 30, 0.8);
+        }
+        
+        .config-info {
+            flex: 1;
+        }
+        
+        .config-protocol {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .protocol-vless { background-color: rgba(138, 43, 226, 0.2); color: #b57aff; }
+        .protocol-vmess { background-color: rgba(40, 167, 69, 0.2); color: #6aff8b; }
+        .protocol-trojan { background-color: rgba(255, 193, 7, 0.2); color: #ffd966; }
+        .protocol-shadowsocks { background-color: rgba(220, 53, 69, 0.2); color: #ff8b94; }
+        
+        .config-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            color: #b0b0b0;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+        
+        .action-btn:hover {
+            color: var(--primary);
+        }
+        
+        .subscription-output {
+            margin-top: 20px;
+        }
+        
+        .output-box {
+            background-color: rgba(15, 15, 30, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        #qrcode {
+            margin-bottom: 15px;
+        }
+        
+        .qr-instructions {
+            font-size: 0.9rem;
+            color: var(--dark);
+            text-align: center;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: rgba(138, 43, 226, 0.3);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid rgba(138, 43, 226, 0.3);
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+        
+        .instructions {
+            background-color: rgba(15, 15, 30, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .instructions h3 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-cat"></i>
+                <div>
+                    <h1>CatMake<span>Online</span></h1>
+                    <div class="tagline">VPN Subscription Manager for V2Ray, HAPP and more</div>
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-secondary" onclick="showInstructions()">
+                    <i class="fas fa-info-circle"></i> Инструкция
+                </button>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-plus-circle"></i> Добавить VPN конфигурацию</h2>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="json">JSON импорт</div>
+                    <div class="tab" data-tab="manual">Ручной ввод</div>
+                    <div class="tab" data-tab="key">Ссылка/Ключ</div>
+                </div>
+                
+                <div class="tab-content active" id="json-tab">
+                    <div class="form-group">
+                        <label for="json-input">Вставьте JSON с конфигурациями VPN:</label>
+                        <textarea id="json-input" placeholder='[{"protocol": "vless", "config": "vless://..."}, {"protocol": "vmess", "config": "vmess://..."}]'></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="importFromJson()">
+                        <i class="fas fa-file-import"></i> Импортировать из JSON
+                    </button>
+                </div>
+                
+                <div class="tab-content" id="manual-tab">
+                    <div class="form-group">
+                        <label for="protocol">Протокол:</label>
+                        <select id="protocol">
+                            <option value="vless">VLESS</option>
+                            <option value="vmess">VMess</option>
+                            <option value="trojan">Trojan</option>
+                            <option value="shadowsocks">Shadowsocks</option>
+                            <option value="v2ray">V2Ray</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="config-name">Название конфигурации:</label>
+                        <input type="text" id="config-name" placeholder="Мой сервер #1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="config-data">Конфигурация (в формате URI или JSON):</label>
+                        <textarea id="config-data" placeholder="vless://88a086d9-5e2f-41e6-b08b-0cf6febe4a7e@150.241.115.21:32004?..."></textarea>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="addManualConfig()">
+                        <i class="fas fa-plus"></i> Добавить конфигурацию
+                    </button>
+                </div>
+                
+                <div class="tab-content" id="key-tab">
+                    <div class="form-group">
+                        <label for="config-key">Вставьте ссылку или ключ VPN:</label>
+                        <textarea id="config-key" placeholder="vless://88a086d9-5e2f-41e6-b08b-0cf6febe4a7e@150.241.115.21:32004?type=xhttp&encryption=none&path=%2F&host=&mode=auto&security=reality&pbk=w9-hZfULMIOlDGZlnl2s_7WzcB9NgjasryeLIqa-J3M&fp=chrome&sni=www.nvidia.com&sid=9a1e1f&spx=/#user_5036182868"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="importFromKey()">
+                        <i class="fas fa-key"></i> Импортировать из ключа
+                    </button>
+                </div>
+                
+                <div class="instructions">
+                    <h3><i class="fas fa-lightbulb"></i> Как использовать:</h3>
+                    <ul>
+                        <li>Импортируйте несколько конфигураций сразу из JSON</li>
+                        <li>Добавляйте конфигурации вручную, выбрав протокол</li>
+                        <li>Вставляйте готовые ссылки/ключи напрямую</li>
+                        <li>Все добавленные конфигурации будут включены в подписку</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-list-alt"></i> Мои конфигурации</h2>
+                
+                <div class="config-list" id="config-list">
+                    <div class="empty-state" id="empty-configs">
+                        <i class="fas fa-cloud"></i>
+                        <p>Пока нет добавленных конфигураций</p>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subscription-name">Название подписки:</label>
+                    <input type="text" id="subscription-name" placeholder="Моя VPN подписка" value="CatMakeOnline Subscription">
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="generateSubscription()">
+                        <i class="fas fa-link"></i> Создать подписку
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateQRCode()">
+                        <i class="fas fa-qrcode"></i> QR код для HAPP
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearAllConfigs()">
+                        <i class="fas fa-trash"></i> Очистить все
+                    </button>
+                </div>
+                
+                <div class="subscription-output" id="subscription-output" style="display: none;">
+                    <label>Ссылка на подписку:</label>
+                    <div class="output-box" id="subscription-link"></div>
+                    <button class="btn btn-primary" onclick="copySubscription()" style="margin-top: 10px;">
+                        <i class="fas fa-copy"></i> Копировать подписку
+                    </button>
+                </div>
+                
+                <div id="qr-container" class="qr-container" style="display: none;">
+                    <div id="qrcode"></div>
+                    <p class="qr-instructions">Отсканируйте этот QR код в приложении HAPP для импорта подписки</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>CatMakeOnline VPN Subscription Manager &copy; 2023</p>
+            <p>Поддерживаемые протоколы: VLESS, VMess, Trojan, Shadowsocks, V2Ray</p>
+        </footer>
+    </div>
+
+    <script>
+        // Инициализация toastr
+        toastr.options = {
+            "positionClass": "toast-top-right",
+            "progressBar": true,
+            "timeOut": "3000"
+        };
+        
+        // Массив для хранения конфигураций
+        let vpnConfigs = [];
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            loadConfigsFromStorage();
+            setupTabs();
+            
+            // Добавляем пример конфигурации для демонстрации
+            if (vpnConfigs.length === 0) {
+                addExampleConfig();
+            }
+        });
+        
+        // Настройка вкладок
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Убираем активный класс у всех вкладок и контента
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Добавляем активный класс текущей вкладке и контенту
+                    this.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+        }
+        
+        // Загрузка конфигураций из localStorage
+        function loadConfigsFromStorage() {
+            const savedConfigs = localStorage.getItem('catmakeonline-vpn-configs');
+            if (savedConfigs) {
+                try {
+                    vpnConfigs = JSON.parse(savedConfigs);
+                    renderConfigList();
+                } catch (e) {
+                    console.error("Ошибка загрузки конфигураций:", e);
+                }
+            }
+        }
+        
+        // Сохранение конфигураций в localStorage
+        function saveConfigsToStorage() {
+            localStorage.setItem('catmakeonline-vpn-configs', JSON.stringify(vpnConfigs));
+        }
+        
+        // Добавление демо-конфигурации
+        function addExampleConfig() {
+            const exampleConfig = {
+                id: generateId(),
+                name: "Пример сервера VLESS",
+                protocol: "vless",
+                config: "vless://88a086d9-5e2f-41e6-b08b-0cf6febe4a7e@150.241.115.21:32004?type=xhttp&encryption=none&path=%2F&host=&mode=auto&security=reality&pbk=w9-hZfULMIOlDGZlnl2s_7WzcB9NgjasryeLIqa-J3M&fp=chrome&sni=www.nvidia.com&sid=9a1e1f&spx=/#user_5036182868",
+                dateAdded: new Date().toISOString()
+            };
+            
+            vpnConfigs.push(exampleConfig);
+            saveConfigsToStorage();
+            renderConfigList();
+            toastr.success("Демо-конфигурация добавлена");
+        }
+        
+        // Импорт из JSON
+        function importFromJson() {
+            const jsonInput = document.getElementById('json-input').value.trim();
+            
+            if (!jsonInput) {
+                toastr.warning("Введите JSON с конфигурациями");
+                return;
+            }
+            
+            try {
+                const configs = JSON.parse(jsonInput);
+                
+                if (!Array.isArray(configs)) {
+                    toastr.error("JSON должен содержать массив конфигураций");
+                    return;
+                }
+                
+                let addedCount = 0;
+                
+                configs.forEach(config => {
+                    if (config.protocol && config.config) {
+                        const newConfig = {
+                            id: generateId(),
+                            name: config.name || `Импортированный ${config.protocol.toUpperCase()}`,
+                            protocol: config.protocol,
+                            config: config.config,
+                            dateAdded: new Date().toISOString()
+                        };
+                        
+                        vpnConfigs.push(newConfig);
+                        addedCount++;
+                    }
+                });
+                
+                if (addedCount > 0) {
+                    saveConfigsToStorage();
+                    renderConfigList();
+                    toastr.success(`Импортировано ${addedCount} конфигураций`);
+                    document.getElementById('json-input').value = '';
+                } else {
+                    toastr.warning("Не найдено валидных конфигураций в JSON");
+                }
+                
+            } catch (e) {
+                toastr.error("Ошибка парсинга JSON: " + e.message);
+            }
+        }
+        
+        // Добавление конфигурации вручную
+        function addManualConfig() {
+            const protocol = document.getElementById('protocol').value;
+            const name = document.getElementById('config-name').value.trim() || `Конфигурация ${protocol.toUpperCase()}`;
+            const configData = document.getElementById('config-data').value.trim();
+            
+            if (!configData) {
+                toastr.warning("Введите конфигурацию");
+                return;
+            }
+            
+            const newConfig = {
+                id: generateId(),
+                name: name,
+                protocol: protocol,
+                config: configData,
+                dateAdded: new Date().toISOString()
+            };
+            
+            vpnConfigs.push(newConfig);
+            saveConfigsToStorage();
+            renderConfigList();
+            
+            // Очищаем поля
+            document.getElementById('config-name').value = '';
+            document.getElementById('config-data').value = '';
+            
+            toastr.success("Конфигурация добавлена");
+        }
+        
+        // Импорт из ключа/ссылки
+        function importFromKey() {
+            const configKey = document.getElementById('config-key').value.trim();
+            
+            if (!configKey) {
+                toastr.warning("Введите ссылку или ключ VPN");
+                return;
+            }
+            
+            // Определяем протокол по префиксу
+            let protocol = "unknown";
+            if (configKey.startsWith("vless://")) protocol = "vless";
+            else if (configKey.startsWith("vmess://")) protocol = "vmess";
+            else if (configKey.startsWith("trojan://")) protocol = "trojan";
+            else if (configKey.startsWith("ss://")) protocol = "shadowsocks";
+            
+            const newConfig = {
+                id: generateId(),
+                name: `Импортированный ${protocol.toUpperCase()}`,
+                protocol: protocol,
+                config: configKey,
+                dateAdded: new Date().toISOString()
+            };
+            
+            vpnConfigs.push(newConfig);
+            saveConfigsToStorage();
+            renderConfigList();
+            
+            document.getElementById('config-key').value = '';
+            toastr.success("Конфигурация импортирована");
+        }
+        
+        // Генерация ID
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+        
+        // Отображение списка конфигураций
+        function renderConfigList() {
+            const configList = document.getElementById('config-list');
+            const emptyState = document.getElementById('empty-configs');
+            
+            if (vpnConfigs.length === 0) {
+                configList.innerHTML = '';
+                configList.appendChild(emptyState);
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            let html = '';
+            
+            vpnConfigs.forEach((config, index) => {
+                const protocolClass = `protocol-${config.protocol}`;
+                
+                html += `
+                <div class="config-item">
+                    <div class="config-info">
+                        <span class="config-protocol ${protocolClass}">${config.protocol.toUpperCase()}</span>
+                        <strong>${config.name}</strong>
+                        <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">${truncateConfig(config.config)}</div>
+                    </div>
+                    <div class="config-actions">
+                        <button class="action-btn" onclick="copyConfig(${index})" title="Копировать">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="action-btn" onclick="removeConfig(${index})" title="Удалить">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                `;
+            });
+            
+            configList.innerHTML = html;
+        }
+        
+        // Усечение конфигурации для отображения
+        function truncateConfig(config) {
+            if (config.length > 60) {
+                return config.substring(0, 60) + '...';
+            }
+            return config;
+        }
+        
+        // Удаление конфигурации
+        function removeConfig(index) {
+            if (confirm("Удалить эту конфигурацию?")) {
+                vpnConfigs.splice(index, 1);
+                saveConfigsToStorage();
+                renderConfigList();
+                toastr.success("Конфигурация удалена");
+                
+                // Скрываем вывод подписки, если он был показан
+                document.getElementById('subscription-output').style.display = 'none';
+                document.getElementById('qr-container').style.display = 'none';
+            }
+        }
+        
+        // Копирование конфигурации
+        function copyConfig(index) {
+            const config = vpnConfigs[index].config;
+            navigator.clipboard.writeText(config)
+                .then(() => {
+                    toastr.success("Конфигурация скопирована в буфер");
+                })
+                .catch(err => {
+                    console.error('Ошибка копирования: ', err);
+                    toastr.error("Не удалось скопировать конфигурацию");
+                });
+        }
+        
+        // Очистка всех конфигураций
+        function clearAllConfigs() {
+            if (vpnConfigs.length === 0) {
+                toastr.info("Список конфигураций уже пуст");
+                return;
+            }
+            
+            if (confirm("Удалить все конфигурации?")) {
+                vpnConfigs = [];
+                saveConfigsToStorage();
+                renderConfigList();
+                
+                // Скрываем вывод
+                document.getElementById('subscription-output').style.display = 'none';
+                document.getElementById('qr-container').style.display = 'none';
+                
+                toastr.success("Все конфигурации удалены");
+            }
+        }
+        
+        // Генерация подписки
+        function generateSubscription() {
+            if (vpnConfigs.length === 0) {
+                toastr.warning("Добавьте хотя бы одну конфигурацию");
+                return;
+            }
+            
+            const subscriptionName = document.getElementById('subscription-name').value.trim() || "VPN Subscription";
+            
+            // Собираем все конфигурации в одну строку (base64 encoded)
+            const configsString = vpnConfigs.map(c => c.config).join('\n');
+            const base64Configs = btoa(unescape(encodeURIComponent(configsString)));
+            
+            // Создаем ссылку подписки
+            const subscriptionLink = `https://catmakeonline.com/subscription#${base64Configs}`;
+            
+            // Показываем результат
+            document.getElementById('subscription-link').textContent = subscriptionLink;
+            document.getElementById('subscription-output').style.display = 'block';
+            document.getElementById('qr-container').style.display = 'none';
+            
+            toastr.success("Подписка создана");
+        }
+        
+        // Генерация QR кода
+        function generateQRCode() {
+            if (vpnConfigs.length === 0) {
+                toastr.warning("Добавьте хотя бы одну конфигурацию");
+                return;
+            }
+            
+            const subscriptionName = document.getElementById('subscription-name').value.trim() || "VPN Subscription";
+            const configsString = vpnConfigs.map(c => c.config).join('\n');
+            const base64Configs = btoa(unescape(encodeURIComponent(configsString)));
+            const subscriptionLink = `https://catmakeonline.com/subscription#${base64Configs}`;
+            
+            // Очищаем предыдущий QR код
+            document.getElementById('qrcode').innerHTML = '';
+            
+            // Генерируем новый QR код
+            new QRCode(document.getElementById('qrcode'), {
+                text: subscriptionLink,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            // Показываем QR контейнер и скрываем текстовый вывод
+            document.getElementById('qr-container').style.display = 'flex';
+            document.getElementById('subscription-output').style.display = 'none';
+            
+            toastr.success("QR код создан");
+        }
+        
+        // Коп<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatMakeOnline - VPN Subscription Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #8a2be2;
+            --primary-dark: #6a1cb0;
+            --secondary: #ff6b6b;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+        
+        body {
+            background-color: #0f0f1e;
+            color: #e0e0e0;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 107, 107, 0.1) 0%, transparent 20%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        .logo h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+        
+        .logo span {
+            color: var(--secondary);
+        }
+        
+        .tagline {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background-color: rgba(26, 26, 46, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .card-title i {
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b0b0b0;
+            font-weight: 500;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            background-color: rgba(15, 15, 30, 0.7);
+            color: #e0e0e0;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(138, 43, 226, 0.1);
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .tab:hover:not(.active) {
+            color: #b0b0b0;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .config-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            padding: 10px;
+        }
+        
+        .config-item {
+            padding: 12px;
+            border-radius: 8px;
+            background-color: rgba(15, 15, 30, 0.5);
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .config-item:hover {
+            background-color: rgba(15, 15, 30, 0.8);
+        }
+        
+        .config-info {
+            flex: 1;
+        }
+        
+        .config-protocol {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .protocol-vless { background-color: rgba(138, 43, 226, 0.2); color: #b57aff; }
+        .protocol-vmess { background-color: rgba(40, 167, 69, 0.2); color: #6aff8b; }
+        .protocol-trojan { background-color: rgba(255, 193, 7, 0.2); color: #ffd966; }
+        .protocol-shadowsocks { background-color: rgba(220, 53, 69, 0.2); color: #ff8b94; }
+        
+        .config-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            color: #b0b0b0;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+        
+        .action-btn:hover {
+            color: var(--primary);
+        }
+        
+        .subscription-output {
+            margin-top: 20px;
+        }
+        
+        .output-box {
+            background-color: rgba(15, 15, 30, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .subscription-header-form {
+            background-color: rgba(15, 15, 30, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .subscription-header-form h3 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        #qrcode {
+            margin-bottom: 15px;
+        }
+        
+        .qr-instructions {
+            font-size: 0.9rem;
+            color: var(--dark);
+            text-align: center;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: rgba(138, 43, 226, 0.3);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid rgba(138, 43, 226, 0.3);
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+        
+        .instructions {
+            background-color: rgba(15, 15, 30, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .instructions h3 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .small-input {
+            padding: 8px 10px !important;
+            font-size: 0.9rem !important;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-cat"></i>
+                <div>
+                    <h1>CatMake<span>Online</span></h1>
+                    <div class="tagline">VPN Subscription Manager - Создание подписок в формате V2RayN</div>
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-secondary" onclick="showInstructions()">
+                    <i class="fas fa-info-circle"></i> Инструкция
+                </button>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-plus-circle"></i> Добавить VPN конфигурацию</h2>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="json">JSON импорт</div>
+                    <div class="tab" data-tab="manual">Ручной ввод</div>
+                    <div class="tab" data-tab="key">Ссылка/Ключ</div>
+                </div>
+                
+                <div class="tab-content active" id="json-tab">
+                    <div class="form-group">
+                        <label for="json-input">Вставьте JSON с конфигурациями VPN:</label>
+                        <textarea id="json-input" placeholder='[{"protocol": "vless", "config": "vless://..."}, {"protocol": "vmess", "config": "vmess://..."}]'></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="importFromJson()">
+                        <i class="fas fa-file-import"></i> Импортировать из JSON
+                    </button>
+                </div>
+                
+                <div class="tab-content" id="manual-tab">
+                    <div class="form-group">
+                        <label for="protocol">Протокол:</label>
+                        <select id="protocol">
+                            <option value="vless">VLESS</option>
+                            <option value="vmess">VMess</option>
+                            <option value="trojan">Trojan</option>
+                            <option value="shadowsocks">Shadowsocks</option>
+                            <option value="v2ray">V2Ray</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="config-name">Название конфигурации:</label>
+                        <input type="text" id="config-name" placeholder="Мой сервер #1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="config-data">Конфигурация (в формате URI или JSON):</label>
+                        <textarea id="config-data" placeholder="vless://88a086d9-5e2f-41e6-b08b-0cf6febe4a7e@150.241.115.21:32004?..."></textarea>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="addManualConfig()">
+                        <i class="fas fa-plus"></i> Добавить конфигурацию
+                    </button>
+                </div>
+                
+                <div class="tab-content" id="key-tab">
+                    <div class="form-group">
+                        <label for="config-key">Вставьте ссылку или ключ VPN:</label>
+                        <textarea id="config-key" placeholder="vless://88a086d9-5e2f-41e6-b08b-0cf6febe4a7e@150.241.115.21:32004?type=xhttp&encryption=none&path=%2F&host=&mode=auto&security=reality&pbk=w9-hZfULMIOlDGZlnl2s_7WzcB9NgjasryeLIqa-J3M&fp=chrome&sni=www.nvidia.com&sid=9a1e1f&spx=/#user_5036182868"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="importFromKey()">
+                        <i class="fas fa-key"></i> Импортировать из ключа
+                    </button>
+                </div>
+                
+                <div class="instructions">
+                    <h3><i class="fas fa-lightbulb"></i> Как использовать:</h3>
+                    <ul>
+                        <li>Импортируйте несколько конфигураций сразу из JSON</li>
+                        <li>Добавляйте конфигурации вручную, выбрав протокол</li>
+                        <li>Вставляйте готовые ссылки/ключи напрямую</li>
+                        <li>Все добавленные конфигурации будут включены в подписку</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-list-alt"></i> Мои конфигурации</h2>
+                
+                <div class="config-list" id="config-list">
+                    <div class="empty-state" id="empty-configs">
+                        <i class="fas fa-cloud"></i>
+                        <p>Пока нет добавленных конфигураций</p>
+                    </div>
+                </div>
+                
+                <div class="subscription-header-form">
+                    <h3><i class="fas fa-cog"></i> Настройки подписки</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="profile-title">Заголовок профиля:</label>
+                            <input type="text" id="profile-title" class="small-input" value="🎄 CatMakeOnline VPN 🎄">
+                        </div>
+                        <div class="form-group">
+                            <label for="support-url">URL поддержки:</label>
+                            <input type="text" id="support-url" class="small-input" value="https://t.me/catmakeonline">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="upload">Загружено (bytes):</label>
+                            <input type="text" id="upload" class="small-input" value="123456789">
+                        </div>
+                        <div class="form-group">
+                            <label for="download">Скачано (bytes):</label>
+                            <input type="text" id="download" class="small-input" value="987654321">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="total">Всего трафика (bytes):</label>
+                            <input type="text" id="total" class="small-input" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="expire">Истекает (timestamp):</label>
+                            <input type="text" id="expire" class="small-input" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="announce">Объявление:</label>
+                        <input type="text" id="announce" class="small-input" value="Версия 1.0.0 | CatMakeOnline VPN Subscription Manager">
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="generateSubscription()">
+                        <i class="fas fa-link"></i> Создать подписку
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateQRCode()">
+                        <i class="fas fa-qrcode"></i> QR код для HAPP
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearAllConfigs()">
+                        <i class="fas fa-trash"></i> Очистить все
+                    </button>
+                </div>
+                
+                <div class="subscription-output" id="subscription-output" style="display: none;">
+                    <label>Содержимое подписки (скопируйте весь текст):</label>
+                    <div class="output-box" id="subscription-content"></div>
+                    <button class="btn btn-primary" onclick="copySubscription()" style="margin-top: 10px;">
+                        <i class="fas fa-copy"></i> Копировать подписку
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadSubscription()" style="margin-top: 10px;">
+                        <i class="fas fa-download"></i> Скачать как файл
+                    </button>
+                </div>
+                
+                <div id="qr-container" class="qr-container" style="display: none;">
+                    <div id="qrcode"></div>
+                    <p class="qr-instructions">Отсканируйте этот QR код в приложении HAPP для импорта подписки</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>CatMakeOnline VPN Subscription Manager &copy; 2023</p>
+            <p>Поддерживаемые протоколы: VLESS, VMess, Trojan, Shadowsocks, V2Ray | Формат подписки: V2RayN</p>
+        </footer>
+    </div>
+
+    <script>
+        // Инициализация toastr
+        toastr.options = {
+            "positionClass": "toast-top-right",
+            "progressBar": true,
+            "timeOut": "3000"
+        };
+        
+        // Массив для хранения конфигураций
+        let vpnConfigs = [];
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            loadConfigsFromStorage();
+            setupTabs();
+            
+            // Добавляем пример конфигурации для демонстрации
+            if (vpnConfigs.length === 0) {
+                addExampleConfigs();
+            }
+        });
+        
+        // Настройка вкладок
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Убираем активный класс у всех вкладок и контента
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Добавляем активный класс текущей вкладке и контенту
+                    this.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+        }
+        
+        // Загрузка конфигураций из localStorage
+        function loadConfigsFromStorage() {
+            const savedConfigs = localStorage.getItem('catmakeonline-vpn-configs');
+            if (savedConfigs) {
+                try {
+                    vpnConfigs = JSON.parse(savedConfigs);
+                    renderConfigList();
+                } catch (e) {
+                    console.error("Ошибка загрузки конфигураций:", e);
+                }
+            }
+        }
+        
+        // Сохранение конфигураций в localStorage
+        function saveConfigsToStorage() {
+            localStorage.setItem('catmakeonline-vpn-configs', JSON.stringify(vpnConfigs));
+        }
+        
+        // Добавление демо-конфигураций
+        function addExampleConfigs() {
+            const exampleConfigs = [
+                {
+                    id: generateId(),
+                    name: "Пример VLESS сервера 1",
+                    protocol: "vless",
+                    config: "vless://01010101@telegramkanal:443?security=none&encryption=none&headerType=none&type=tcp#%E2%9D%84%EF%B8%8F+%D1%82%D0%B3%D0%BA%3A+%40obspiskov+%E2%9D%84%EF%B8%8F",
+                    dateAdded: new Date().toISOString()
+                },
+                {
+                    id: generateId(),
+                    name: "Пример VLESS сервера 2",
+                    protocol: "vless",
+                    config: "vless://01010101@byvsevjik:443?security=none&encryption=none&headerType=none&type=tcp#%E2%9D%84%EF%B8%8F+By+%40vsevj_134+%E2%9D%84%EF%B8%8F",
+                    dateAdded: new Date().toISOString()
+                }
+            ];
+            
+            vpnConfigs.push(...exampleConfigs);
+            saveConfigsToStorage();
+            renderConfigList();
+            toastr.success("Демо-конфигурации добавлены");
+        }
+        
+        // Импорт из JSON
+        function importFromJson() {
+            const jsonInput = document.getElementById('json-input').value.trim();
+            
+            if (!jsonInput) {
+                toastr.warning("Введите JSON с конфигурациями");
+                return;
+            }
+            
+            try {
+                const configs = JSON.parse(jsonInput);
+                
+                if (!Array.isArray(configs)) {
+                    toastr.error("JSON должен содержать массив конфигураций");
+                    return;
+                }
+                
+                let addedCount = 0;
+                
+                configs.forEach(config => {
+                    if (config.protocol && config.config) {
+                        const newConfig = {
+                            id: generateId(),
+                            name: config.name || `Импортированный ${config.protocol.toUpperCase()}`,
+                            protocol: config.protocol,
+                            config: config.config,
+                            dateAdded: new Date().toISOString()
+                        };
+                        
+                        vpnConfigs.push(newConfig);
+                        addedCount++;
+                    }
+                });
+                
+                if (addedCount > 0) {
+                    saveConfigsToStorage();
+                    renderConfigList();
+                    toastr.success(`Импортировано ${addedCount} конфигураций`);
+                    document.getElementById('json-input').value = '';
+                } else {
+                    toastr.warning("Не найдено валидных конфигураций в JSON");
+                }
+                
+            } catch (e) {
+                toastr.error("Ошибка парсинга JSON: " + e.message);
+            }
+        }
+        
+        // Добавление конфигурации вручную
+        function addManualConfig() {
+            const protocol = document.getElementById('protocol').value;
+            const name = document.getElementById('config-name').value.trim() || `Конфигурация ${protocol.toUpperCase()}`;
+            const configData = document.getElementById('config-data').value.trim();
+            
+            if (!configData) {
+                toastr.warning("Введите конфигурацию");
+                return;
+            }
+            
+            const newConfig = {
+                id: generateId(),
+                name: name,
+                protocol: protocol,
+                config: configData,
+                dateAdded: new Date().toISOString()
+            };
+            
+            vpnConfigs.push(newConfig);
+            saveConfigsToStorage();
+            renderConfigList();
+            
+            // Очищаем поля
+            document.getElementById('config-name').value = '';
+            document.getElementById('config-data').value = '';
+            
+            toastr.success("Конфигурация добавлена");
+        }
+        
+        // Импорт из ключа/ссылки
+        function importFromKey() {
+            const configKey = document.getElementById('config-key').value.trim();
+            
+            if (!configKey) {
+                toastr.warning("Введите ссылку или ключ VPN");
+                return;
+            }
+            
+            // Определяем протокол по префиксу
+            let protocol = "unknown";
+            if (configKey.startsWith("vless://")) protocol = "vless";
+            else if (configKey.startsWith("vmess://")) protocol = "vmess";
+            else if (configKey.startsWith("trojan://")) protocol = "trojan";
+            else if (configKey.startsWith("ss://")) protocol = "shadowsocks";
+            
+            const newConfig = {
+                id: generateId(),
+                name: `Импортированный ${protocol.toUpperCase()}`,
+                protocol: protocol,
+                config: configKey,
+                dateAdded: new Date().toISOString()
+            };
+            
+            vpnConfigs.push(newConfig);
+            saveConfigsToStorage();
+            renderConfigList();
+            
+            document.getElementById('config-key').value = '';
+            toastr.success("Конфигурация импортирована");
+        }
+        
+        // Генерация ID
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+        
+        // Отображение списка конфигураций
+        function renderConfigList() {
+            const configList = document.getElementById('config-list');
+            const emptyState = document.getElementById('empty-configs');
+            
+            if (vpnConfigs.length === 0) {
+                configList.innerHTML = '';
+                configList.appendChild(emptyState);
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            let html = '';
+            
+            vpnConfigs.forEach((config, index) => {
+                const protocolClass = `protocol-${config.protocol}`;
+                
+                html += `
+                <div class="config-item">
+                    <div class="config-info">
+                        <span class="config-protocol ${protocolClass}">${config.protocol.toUpperCase()}</span>
+                        <strong>${config.name}</strong>
+                        <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">${truncateConfig(config.config)}</div>
+                    </div>
+                    <div class="config-actions">
+                        <button class="action-btn" onclick="copyConfig(${index})" title="Копировать">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="action-btn" onclick="editConfig(${index})" title="Редактировать">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn" onclick="removeConfig(${index})" title="Удалить">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                `;
+            });
+            
+            configList.innerHTML = html;
+        }
+        
+        // Усечение конфигурации для отображения
+        function truncateConfig(config) {
+            if (config.length > 60) {
+                return config.substring(0, 60) + '...';
+            }
+            return config;
+        }
+        
+        // Удаление конфигурации
+        function removeConfig(index) {
+            if (confirm("Удалить эту конфигурацию?")) {
+                vpnConfigs.splice(index, 1);
+                saveConfigsToStorage();
+                renderConfigList();
+                toastr.success("Конфигурация удалена");
+                
+                // Скрываем вывод подписки, если он был показан
+                document.getElementById('subscription-output').style.display = 'none';
+                document.getElementById('qr-container').style.display = 'none';() {
+            const subscriptionLink = document.getElementById('subscription-link').textContent;
+            navigator.clipboard.writeText(subscriptionLink)
+                .then(() => {
+                    toastr.success("Подписка скопирована в буфер");
+                })
+                .catch(err => {
+                    console.error('Ошибка копирования: ', err);
+                    toastr.error("Не удалось скопировать подписку");
+                });
+        }
+        
+        // Показать инструкции
+        function showInstructions() {
+            const instructions = `
+            <h3>Инструкция по использованию CatMakeOnline</h3>
+            <p><strong>1. Добавление конфигураций VPN:</strong></p>
+            <ul>
+                <li>Используйте вкладку "JSON импорт" для загрузки нескольких конфигураций сразу</li>
+                <li>Используйте вкладку "Ручной ввод" для добавления одной конфигурации с выбором протокола</li>
+                <li>Используйте вкладку "Ссылка/Ключ" для быстрого импорта готовых ссылок</li>
+            </ul>
+            <p><strong>2. Управление конфигурациями:</strong></p>
+            <ul>
+                <li>Все добавленные конфигурации отображаются в списке справа</li>
+                <li>Вы можете копировать или удалять отдельные конфигурации</li>
+                <li>Используйте кнопку "Очистить все" для удаления всех конфигураций</li>
+            </ul>
+            <p><strong>3. Создание подписки:</strong></p>
+            <ul>
+                <li>Нажмите "Создать подписку" для генерации ссылки подписки</li>
+                <li>Подписка будет содержать все добавленные конфигурации</li>
+                <li>Нажмите "QR код для HAPP" для генерации QR-кода для приложения HAPP</li>
+            </ul>
+            <p><strong>Поддерживаемые протоколы:</strong> VLESS, VMess, Trojan, Shadowsocks, V2Ray</p>
+            `;
+            
+            // Используем alert для простоты, но можно заменить на модальное окно
+            alert(instructions.replace(/<[^>]*>/g, ''));
+        }
+    </script>
+</body>
+</html>
